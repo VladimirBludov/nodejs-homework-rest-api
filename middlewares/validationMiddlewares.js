@@ -40,7 +40,7 @@ const addOptionalFieldsValidation = (req, res, next) => {
   const validationResult = schemaOptionalFields.validate(req.body);
 
   if (validationResult?.error) {
-    return res.status(400).json({ message: validationResult.error.message });
+    next(new ValidationError(validationResult.error.message));
   }
 
   next();
