@@ -1,45 +1,22 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  addRequiredFieldsValidation,
-  addOptionalFieldsValidation,
-  addCheckContactValidation,
-} = require("../../middlewares/validationMiddlewares");
+const { contacts: ctrl } = require("../../controllers");
+const { checkContact, validation, catchWrapper, auth } = require("../../middlewares");
+const { joiAddSchema, joiUpdateSchema } = require("../../models/contact");
 
-const {
-  getContactsController,
-  getContactByIdController,
-  addContactController,
-  deleteContactController,
-  changeContactController,
-  updateStatusContactController,
-} = require("../../controllers/contactsController");
-const { catchWrapper } = require("../../helpers/apiHelpers");
+router.use("/:contactId", auth, checkContact);
 
-router.use("/:contactId", addCheckContactValidation);
+router.get("/", auth, catchWrapper(ctrl.getAll));
 
-router.get("/", catchWrapper(getContactsController));
+router.get("/:contactId", catchWrapper(ctrl.getById));
 
-router.get("/:contactId", catchWrapper(getContactByIdController));
+router.post("/", auth, validation(joiAddSchema), catchWrapper(ctrl.add));
 
-router.post(
-  "/",
-  addRequiredFieldsValidation,
-  catchWrapper(addContactController)
-);
+router.delete("/:contactId", catchWrapper(ctrl.remove));
 
-router.delete("/:contactId", catchWrapper(deleteContactController));
+router.put("/:contactId", validation(joiUpdateSchema), catchWrapper(ctrl.update));
 
-router.put(
-  "/:contactId",
-  addOptionalFieldsValidation,
-  catchWrapper(changeContactController)
-);
-
-router.patch(
-  "/:contactId/favorite",
-  catchWrapper(updateStatusContactController)
-);
+router.patch("/:contactId/favorite", catchWrapper(ctrl.changeStatus));
 
 module.exports = router;
