@@ -1,6 +1,7 @@
 const fs = require("fs/promises");
 const path = require("path");
 const Jimp = require("jimp");
+const { Unauthorized } = require("http-errors");
 const { User } = require("../../models");
 
 const avatarsDir = path.join(__dirname, "../../", "public", "avatars");
@@ -8,7 +9,6 @@ const avatarsDir = path.join(__dirname, "../../", "public", "avatars");
 const updateAvatar = async (req, res) => {
   const { _id: userId } = req.user;
   const { path: tempDir, originalname } = req.file;
-  const { Unauthorized } = require("http-errors");
   const avatarName = `${userId}_${originalname}`;
 
   try {
