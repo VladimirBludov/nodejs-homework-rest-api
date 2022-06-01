@@ -22,6 +22,14 @@ const userSchema = new Schema({
     type: String,
     default: null,
   },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
 });
 
 userSchema.methods.setPassword = function (password) {
@@ -36,7 +44,7 @@ const joiSchema = Joi.object({
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ["com", "net"] },
+      tlds: { allow: ["com", "net", "ua"] },
     })
     .required(),
   password: Joi.string().required(),
@@ -52,6 +60,15 @@ const joiAvatarUrlSchema = Joi.object({
   avatarURL: Joi.string(),
 });
 
+const joiEmailSchema = Joi.object({
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net", "ua"] },
+    })
+    .required(),
+});
+
 const User = model("User", userSchema);
 
 module.exports = {
@@ -59,4 +76,5 @@ module.exports = {
   joiSchema,
   joiSubscriptionSchema,
   joiAvatarUrlSchema,
+  joiEmailSchema,
 };
